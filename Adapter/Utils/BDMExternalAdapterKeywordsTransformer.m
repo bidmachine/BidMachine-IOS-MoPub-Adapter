@@ -1,16 +1,14 @@
 //
-//  BMMKeywordsTransformer.m
+//  BDMExternalAdapterKeywordsTransformer.m
 //  BidMachine
 //
-//  Created by Stas Kochkin on 29/08/2019.
-//  Copyright © 2019 BidMachine. All rights reserved.
+//  Created by Ilia Lozhkin on 02.02.2021.
+//  Copyright © 2021 Appodeal. All rights reserved.
 //
 
-#import "BMMKeywordsTransformer.h"
-#import <StackFoundation/StackFoundation.h>
+#import "BDMExternalAdapterKeywordsTransformer.h"
 
-
-@implementation BMMKeywordsTransformer
+@implementation BDMExternalAdapterKeywordsTransformer
 
 + (Class)transformedValueClass {
     return [NSString class];

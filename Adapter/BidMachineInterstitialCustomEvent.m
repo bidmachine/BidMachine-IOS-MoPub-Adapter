@@ -7,17 +7,14 @@
 //
 
 #import "BidMachineInterstitialCustomEvent.h"
-#import "BMMFactory+BMRequest.h"
-#import "BMMTransformer.h"
-#import "BMMConstants.h"
-#import "BMMError.h"
-#import "BMMUtils.h"
+#import "BidMachineAdapterConfiguration.h"
 
 
-@interface BidMachineInterstitialCustomEvent() <BDMInterstitialDelegate, BDMAdEventProducerDelegate>
+@interface BidMachineInterstitialCustomEvent() <BDMInterstitialDelegate, BDMAdEventProducerDelegate, BDMExternalAdapterRequestControllerDelegate>
 
 @property (nonatomic, strong) BDMInterstitial *interstitial;
 @property (nonatomic, strong) NSString *networkId;
+@property (nonatomic, strong) BDMExternalAdapterRequestController *requestController;
 
 @end
 
@@ -38,7 +35,7 @@
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
-    return false;
+    return NO;
 }
 
 - (BOOL)hasAdAvailable {
@@ -49,27 +46,10 @@
     NSMutableDictionary *extraInfo = self.localExtras.mutableCopy ?: [NSMutableDictionary new];
     [extraInfo addEntriesFromDictionary:info];
     
-    NSString *price = ANY(extraInfo).from(kBidMachinePrice).string;
-    BOOL isPrebid = [BDMRequestStorage.shared isPrebidRequestsForType:BDMInternalPlacementTypeInterstitial];
-    
-    if (isPrebid && price) {
-        BDMRequest *auctionRequest = [BDMRequestStorage.shared requestForPrice:price type:BDMInternalPlacementTypeInterstitial];
-        if ([auctionRequest isKindOfClass:BDMInterstitialRequest.self]) {
-            [self.interstitial populateWithRequest:(BDMInterstitialRequest *)auctionRequest];
-        } else {
-            NSError *error = [BMMError errorWithCode:BidMachineAdapterErrorCodeMissingSellerId description:@"Bidmachine can't fint prebid request"];
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.networkId);
-            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-        }
-    } else {
-       __weak typeof(self) weakSelf = self;
-        [BMMUtils.shared initializeBidMachineSDKWithCustomEventInfo:extraInfo completion:^(NSError *error) {
-            NSArray *priceFloors = extraInfo[@"priceFloors"] ?: @[];
-            BDMInterstitialRequest *request = [BMMFactory.sharedFactory interstitialRequestWithExtraInfo:extraInfo
-                                                                                             priceFloors:priceFloors];
-            [weakSelf.interstitial populateWithRequest:request];
-        }];
-    }
+    [self.requestController prepareRequestWithConfiguration:({
+        BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:extraInfo];
+        config;
+    })];
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController {
@@ -85,6 +65,26 @@
         _interstitial.producerDelegate = self;
     }
     return _interstitial;
+}
+
+- (BDMExternalAdapterRequestController *)requestController {
+    if (!_requestController) {
+        _requestController = [[BDMExternalAdapterRequestController alloc] initWithType:BDMInternalPlacementTypeInterstitial
+                                                                              delegate:self];
+    }
+    return _requestController;
+}
+
+#pragma mark - BDMExternalAdapterRequestControllerDelegate
+
+- (void)controller:(BDMExternalAdapterRequestController *)controller didPrepareRequest:(BDMRequest *)request {
+    BDMInterstitialRequest *adRequest = (BDMInterstitialRequest *)request;
+    [self.interstitial populateWithRequest:adRequest];
+}
+
+- (void)controller:(BDMExternalAdapterRequestController *)controller didFailPrepareRequest:(NSError *)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.networkId);
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 #pragma mark - BDMInterstitialDelegate

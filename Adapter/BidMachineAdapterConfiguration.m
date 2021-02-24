@@ -7,7 +7,6 @@
 //
 
 #import "BidMachineAdapterConfiguration.h"
-#import <BidMachine/BDMAdNetworkConfiguration.h>
 
 
 @implementation BidMachineAdapterConfiguration
@@ -28,6 +27,19 @@
 
 - (NSString *)networkSdkVersion {
     return kBDMVersion;
+}
+
+- (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration
+                                  complete:(void (^)(NSError * _Nullable))complete
+{
+    BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:configuration];
+    [BDMExternalAdapterRequestController startBidMachineSDKWithConfiguration:config completion:^(NSError *error) {
+        error ?
+            MPLogEvent([MPLogEvent error:error message:nil]) :
+            MPLogInfo(@"BidMachine SDK was successfully initialized!");
+        
+        complete ? complete(error) : nil;
+    }];
 }
 
 @end

@@ -7,17 +7,14 @@
 //
 
 #import "BidMachineBannerCustomEvent.h"
-#import "BMMFactory+BMRequest.h"
-#import "BMMTransformer.h"
-#import "BMMConstants.h"
-#import "BMMError.h"
-#import "BMMUtils.h"
+#import "BidMachineAdapterConfiguration.h"
 
 
-@interface BidMachineBannerCustomEvent() <BDMBannerDelegate, BDMAdEventProducerDelegate>
+@interface BidMachineBannerCustomEvent() <BDMBannerDelegate, BDMAdEventProducerDelegate, BDMExternalAdapterRequestControllerDelegate>
 
 @property (nonatomic, strong) BDMBannerView *bannerView;
 @property (nonatomic, strong) NSString *networkId;
+@property (nonatomic, strong) BDMExternalAdapterRequestController *requestController;
 
 @end
 
@@ -40,37 +37,12 @@
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     NSMutableDictionary *extraInfo = self.localExtras.mutableCopy ?: [NSMutableDictionary new];
     [extraInfo addEntriesFromDictionary:info];
-    BDMBannerAdSize adSize = [BMMTransformer bannerSizeFromCGSize:size];
     
-    NSString *price = ANY(extraInfo).from(kBidMachinePrice).string;
-    BOOL isPrebid = [BDMRequestStorage.shared isPrebidRequestsForType:BDMInternalPlacementTypeBanner];
-    
-    if (isPrebid && price) {
-        BDMRequest *auctionRequest = [BDMRequestStorage.shared requestForPrice:price type:BDMInternalPlacementTypeBanner];
-        if ([auctionRequest isKindOfClass:BDMBannerRequest.self]) {
-            [self populate:(BDMBannerRequest *)auctionRequest adSize:adSize];
-        } else {
-            NSError *error = [BMMError errorWithCode:BidMachineAdapterErrorCodeMissingSellerId description:@"Bidmachine can't fint prebid request"];
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.networkId);
-            [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
-        }
-    } else {
-        __weak typeof(self) weakSelf = self;
-        [BMMUtils.shared initializeBidMachineSDKWithCustomEventInfo:extraInfo completion:^(NSError *error) {
-            NSArray *priceFloors = extraInfo[@"priceFloors"] ?: @[];
-            BDMBannerRequest *request = [BMMFactory.sharedFactory bannerRequestWithSize:adSize
-                                                                              extraInfo:extraInfo
-                                                                            priceFloors:priceFloors];
-            [weakSelf populate:request adSize:adSize];
-        }];
-    }
-}
-
-- (void)populate:(BDMBannerRequest *)request
-          adSize:(BDMBannerAdSize)adSize {
-    // Transform size 2 times to avoid fluid sizes with 0 width
-    [self.bannerView setFrame:(CGRect){.size = CGSizeFromBDMSize(adSize)}];
-    [self.bannerView populateWithRequest:request];
+    [self.requestController prepareRequestWithConfiguration:({
+        BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:extraInfo];
+        config.bannerSize = size;
+        config;
+    })];
 }
 
 #pragma mark - Lazy
@@ -82,6 +54,27 @@
         _bannerView.producerDelegate = self;
     }
     return _bannerView;
+}
+
+- (BDMExternalAdapterRequestController *)requestController {
+    if (!_requestController) {
+        _requestController = [[BDMExternalAdapterRequestController alloc] initWithType:BDMInternalPlacementTypeBanner
+                                                                              delegate:self];
+    }
+    return _requestController;
+}
+
+#pragma mark - BDMExternalAdapterRequestControllerDelegate
+
+- (void)controller:(BDMExternalAdapterRequestController *)controller didPrepareRequest:(BDMRequest *)request {
+    BDMBannerRequest *adRequest = (BDMBannerRequest *)request;
+    [self.bannerView setFrame:(CGRect){.size = CGSizeFromBDMSize(adRequest.adSize)}];
+    [self.bannerView populateWithRequest:adRequest];
+}
+
+- (void)controller:(BDMExternalAdapterRequestController *)controller didFailPrepareRequest:(NSError *)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.networkId);
+    [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 #pragma mark - BDMBannerDelegate

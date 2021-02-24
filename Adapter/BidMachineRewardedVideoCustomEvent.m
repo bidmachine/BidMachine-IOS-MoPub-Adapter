@@ -7,23 +7,14 @@
 //
 
 #import "BidMachineRewardedVideoCustomEvent.h"
-#import "BMMFactory+BMRequest.h"
-#import "BMMTransformer.h"
-#import "BMMConstants.h"
-#import "BMMError.h"
-#import "BMMUtils.h"
-
-#if __has_include("MoPub.h")
-    #import "MPLogging.h"
-    #import "MoPub.h"
-    #import "MPReward.h"
-#endif
+#import "BidMachineAdapterConfiguration.h"
 
 
-@interface BidMachineRewardedVideoCustomEvent() <BDMRewardedDelegate, BDMAdEventProducerDelegate>
+@interface BidMachineRewardedVideoCustomEvent() <BDMRewardedDelegate, BDMAdEventProducerDelegate, BDMExternalAdapterRequestControllerDelegate>
 
 @property (nonatomic, strong) BDMRewarded *rewarded;
 @property (nonatomic, strong) NSString *networkId;
+@property (nonatomic, strong) BDMExternalAdapterRequestController *requestController;
 
 @end
 
@@ -40,7 +31,7 @@
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
-    return false;
+    return NO;
 }
 
 - (BOOL)isRewardExpected {
@@ -55,27 +46,10 @@
     NSMutableDictionary *extraInfo = self.localExtras.mutableCopy ?: [NSMutableDictionary new];
     [extraInfo addEntriesFromDictionary:info];
     
-    NSString *price = ANY(extraInfo).from(kBidMachinePrice).string;
-    BOOL isPrebid = [BDMRequestStorage.shared isPrebidRequestsForType:BDMInternalPlacementTypeRewardedVideo];
-    
-    if (isPrebid && price) {
-        BDMRequest *auctionRequest = [BDMRequestStorage.shared requestForPrice:price type:BDMInternalPlacementTypeRewardedVideo];
-        if ([auctionRequest isKindOfClass:BDMRewardedRequest.self]) {
-            [self.rewarded populateWithRequest:(BDMRewardedRequest *)auctionRequest];
-        } else {
-            NSError *error = [BMMError errorWithCode:BidMachineAdapterErrorCodeMissingSellerId description:@"Bidmachine can't fint prebid request"];
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.networkId);
-            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-        }
-    } else {
-       __weak typeof(self) weakSelf = self;
-        [BMMUtils.shared initializeBidMachineSDKWithCustomEventInfo:extraInfo completion:^(NSError *error) {
-            NSArray *priceFloors = extraInfo[@"priceFloors"] ?: @[];
-            BDMRewardedRequest *request = [BMMFactory.sharedFactory rewardedRequestWithExtraInfo:extraInfo
-                                                                                     priceFloors:priceFloors];
-            [weakSelf.rewarded populateWithRequest:request];
-        }];
-    }
+    [self.requestController prepareRequestWithConfiguration:({
+        BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:extraInfo];
+        config;
+    })];
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController  {
@@ -91,6 +65,26 @@
         _rewarded.producerDelegate = self;
     }
     return _rewarded;
+}
+
+- (BDMExternalAdapterRequestController *)requestController {
+    if (!_requestController) {
+        _requestController = [[BDMExternalAdapterRequestController alloc] initWithType:BDMInternalPlacementTypeRewardedVideo
+                                                                              delegate:self];
+    }
+    return _requestController;
+}
+
+#pragma mark - BDMExternalAdapterRequestControllerDelegate
+
+- (void)controller:(BDMExternalAdapterRequestController *)controller didPrepareRequest:(BDMRequest *)request {
+    BDMRewardedRequest *adRequest = (BDMRewardedRequest *)request;
+    [self.rewarded populateWithRequest:adRequest];
+}
+
+- (void)controller:(BDMExternalAdapterRequestController *)controller didFailPrepareRequest:(NSError *)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.networkId);
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 #pragma mark - BDMRewardedDelegatge

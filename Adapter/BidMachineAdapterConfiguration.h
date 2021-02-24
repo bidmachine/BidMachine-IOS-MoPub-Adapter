@@ -16,6 +16,11 @@
 #import "MPBaseAdapterConfiguration.h"
 #endif
 
+@import BidMachine;
+@import StackFoundation;
+
+#import "BDMExternalAdapterConfiguration.h"
+#import "BDMExternalAdapterRequestController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
