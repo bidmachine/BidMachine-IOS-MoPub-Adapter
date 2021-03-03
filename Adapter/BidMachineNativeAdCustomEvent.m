@@ -32,10 +32,9 @@
     NSMutableDictionary *extraInfo = self.localExtras.mutableCopy ?: [NSMutableDictionary new];
     [extraInfo addEntriesFromDictionary:info];
     
-    [self.requestController prepareRequestWithConfiguration:({
-        BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:extraInfo];
-        config;
-    })];
+    [self.requestController prepareRequestWithConfiguration:[BDMExternalAdapterConfiguration configurationWithBuilder:^(id<BDMExternalAdapterConfigurationBuilderProtocol> builder) {
+        builder.appendJsonConfiguration(extraInfo);
+    }]];
 }
 
 - (BDMNativeAd *)nativeAd {

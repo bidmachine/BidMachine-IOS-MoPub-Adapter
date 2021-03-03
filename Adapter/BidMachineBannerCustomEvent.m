@@ -38,11 +38,10 @@
     NSMutableDictionary *extraInfo = self.localExtras.mutableCopy ?: [NSMutableDictionary new];
     [extraInfo addEntriesFromDictionary:info];
     
-    [self.requestController prepareRequestWithConfiguration:({
-        BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:extraInfo];
-        config.bannerSize = size;
-        config;
-    })];
+    [self.requestController prepareRequestWithConfiguration:[BDMExternalAdapterConfiguration configurationWithBuilder:^(id<BDMExternalAdapterConfigurationBuilderProtocol> builder) {
+        builder.appendJsonConfiguration(extraInfo);
+        builder.appendAdSize(size);
+    }]];
 }
 
 #pragma mark - Lazy
@@ -93,8 +92,6 @@
 
 - (void)bannerViewRecieveUserInteraction:(BDMBannerView *)bannerView {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.networkId);
-    [self.delegate inlineAdAdapterWillBeginUserAction:self];
-    [self.delegate inlineAdAdapterDidEndUserAction:self];
 }
 
 - (void)bannerViewWillLeaveApplication:(BDMBannerView *)bannerView {
@@ -105,11 +102,13 @@
 - (void)bannerViewWillPresentScreen:(BDMBannerView *)bannerView {
     MPLogInfo(@"Banner with id:%@ - Will present internal view.", self.networkId);
     MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.networkId);
+    [self.delegate inlineAdAdapterWillBeginUserAction:self];
 }
 
 - (void)bannerViewDidDismissScreen:(BDMBannerView *)bannerView {
     MPLogInfo(@"Banner with id:%@ - Will dismiss internal view.", self.networkId);
     MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.networkId);
+    [self.delegate inlineAdAdapterDidEndUserAction:self];
 }
 
 #pragma mark - BDMAdEventProducerDelegate

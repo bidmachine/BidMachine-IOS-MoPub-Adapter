@@ -19,7 +19,7 @@
 @import BidMachine;
 @import StackFoundation;
 
-#import "BDMExternalAdapterConfiguration.h"
+#import "BDMExternalAdapterSDKController.h"
 #import "BDMExternalAdapterRequestController.h"
 
 NS_ASSUME_NONNULL_BEGIN

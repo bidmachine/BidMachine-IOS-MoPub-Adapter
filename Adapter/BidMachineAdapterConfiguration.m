@@ -14,7 +14,7 @@
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"1.6.4.0";
+    return @"1.6.4.1";
 }
 
 - (NSString *)biddingToken {
@@ -32,8 +32,11 @@
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration
                                   complete:(void (^)(NSError * _Nullable))complete
 {
-    BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithJSON:configuration];
-    [BDMExternalAdapterRequestController startBidMachineSDKWithConfiguration:config completion:^(NSError *error) {
+    BDMExternalAdapterConfiguration *config = [BDMExternalAdapterConfiguration configurationWithBuilder:^(id<BDMExternalAdapterConfigurationBuilderProtocol> builder) {
+        builder.appendJsonConfiguration(configuration);
+    }];
+    
+    [BDMExternalAdapterSDKController.shared startControllerWithConfiguration:config completion:^(NSError *error) {
         error ?
             MPLogEvent([MPLogEvent error:error message:nil]) :
             MPLogInfo(@"BidMachine SDK was successfully initialized!");
