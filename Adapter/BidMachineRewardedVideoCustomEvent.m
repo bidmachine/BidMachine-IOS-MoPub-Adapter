@@ -119,8 +119,8 @@
 
 - (void)rewardedDidDismiss:(BDMRewarded *)rewarded {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.networkId);
-    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)rewardedFinishRewardAction:(BDMRewarded *)rewarded {

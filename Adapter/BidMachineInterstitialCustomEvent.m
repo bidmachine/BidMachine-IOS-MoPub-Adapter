@@ -113,8 +113,8 @@
 }
 
 - (void)interstitialDidDismiss:(BDMInterstitial *)interstitial {
-    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
-    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.networkId);
 }
 
