@@ -261,8 +261,12 @@ NSString *const kBDMExtTypeKey                      = @"bm_ad_type";
 
 - (id<BDMExternalAdapterConfigurationBuilderProtocol>  _Nonnull (^)(CLLocation * _Nonnull))appendDeviceLocation {
     return ^id<BDMExternalAdapterConfigurationBuilderProtocol> (CLLocation *value){
-        self.configuration[kBDMExtLatKey] = @(value.coordinate.latitude);
-        self.configuration[kBDMExtLonKey] = @(value.coordinate.longitude);
+        if (value && value.coordinate.latitude != 0) {
+            self.configuration[kBDMExtLatKey] = @(value.coordinate.latitude);
+        }
+        if (value && value.coordinate.longitude != 0) {
+            self.configuration[kBDMExtLonKey] = @(value.coordinate.longitude);
+        }
         return self;
     };
 }
@@ -296,7 +300,7 @@ NSString *const kBDMExtTypeKey                      = @"bm_ad_type";
 #pragma mark - Private
 
 - (NSString *)stringFromBool:(BOOL)value {
-    return value ? @"true" : @"false";
+    return value ? @"true" : nil;
 }
 
 - (NSString *)stringFromArrayOfString:(NSArray <NSString *> *)value {
