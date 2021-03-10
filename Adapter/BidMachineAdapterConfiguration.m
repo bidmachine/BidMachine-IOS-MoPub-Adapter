@@ -8,6 +8,9 @@
 
 #import "BidMachineAdapterConfiguration.h"
 
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 @implementation BidMachineAdapterConfiguration
 

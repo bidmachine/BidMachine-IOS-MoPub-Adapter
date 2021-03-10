@@ -7,13 +7,11 @@
 //
 
 #if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
-#elif __has_include(<mopub-ios-sdk/MoPub.h>)
-#import <mopub-ios-sdk/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDK/MoPub.h>)
+    #import <MoPubSDK/MoPub.h>
 #else
-#import "MPBaseAdapterConfiguration.h"
+    #import "MPBaseAdapterConfiguration.h"
 #endif
 
 @import BidMachine;

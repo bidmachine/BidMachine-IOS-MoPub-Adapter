@@ -9,6 +9,10 @@
 #import "BidMachineInterstitialCustomEvent.h"
 #import "BidMachineAdapterConfiguration.h"
 
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
+
 
 @interface BidMachineInterstitialCustomEvent() <BDMInterstitialDelegate, BDMAdEventProducerDelegate, BDMExternalAdapterRequestControllerDelegate>
 

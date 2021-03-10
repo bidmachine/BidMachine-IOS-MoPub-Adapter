@@ -24,7 +24,7 @@ limitations under the License.
   spec.platform     = :ios, '10.0'
   spec.source       = { :git => "https://github.com/bidmachine/BidMachine-IOS-MoPub-Adapter.git", :tag => "v#{spec.version}" }
 
-  spec.source_files = 'Adapter/**/*.{swift,h,m}'
+  spec.source_files = 'Adapter/**/*.{h,m}'
   spec.static_framework = true
 
   spec.pod_target_xcconfig = {

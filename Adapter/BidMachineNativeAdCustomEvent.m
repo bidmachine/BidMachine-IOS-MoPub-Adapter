@@ -10,6 +10,10 @@
 #import "BidMachineAdapterConfiguration.h"
 #import "BidMachineNativeAdAdapter.h"
 
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
+
 @interface BidMachineNativeAdCustomEvent ()<BDMNativeAdDelegate, BDMExternalAdapterRequestControllerDelegate>
 
 @property (nonatomic, strong) BDMNativeAd *nativeAd;
