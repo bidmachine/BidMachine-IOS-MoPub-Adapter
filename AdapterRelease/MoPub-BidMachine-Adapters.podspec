@@ -27,8 +27,16 @@ limitations under the License.
   spec.source_files = 'Adapter/**/*.{swift,h,m}'
   spec.static_framework = true
 
-  spec.pod_target_xcconfig      = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64 arm64e armv7 armv7s', 'EXCLUDED_ARCHS[sdk=iphoneos*]' => 'i386 x86_64' }
-  spec.user_target_xcconfig     = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64 arm64e armv7 armv7s', 'EXCLUDED_ARCHS[sdk=iphoneos*]' => 'i386 x86_64' }
+  spec.pod_target_xcconfig = {
+    "VALID_ARCHS": "arm64 armv7 armv7s x86_64",
+    "VALID_ARCHS[sdk=iphoneos*]": "arm64 armv7 armv7s",
+    "VALID_ARCHS[sdk=iphonesimulator*]": "x86_64"
+  }
+  spec.user_target_xcconfig = {
+    "VALID_ARCHS": "arm64 armv7 armv7s x86_64",
+    "VALID_ARCHS[sdk=iphoneos*]": "arm64 armv7 armv7s",
+    "VALID_ARCHS[sdk=iphonesimulator*]": "x86_64"
+  }
 
   spec.dependency 'BidMachine', '1.6.4'
   spec.dependency 'mopub-ios-sdk', '5.16.1'

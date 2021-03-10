@@ -1,14 +1,14 @@
 ![BidMachine iOS](https://appodeal-ios.s3-us-west-1.amazonaws.com/docs/bidmachine.png)
 
-> **_WARNING:_** Migrate 1.6.4.0 - 1.6.4.1
-
-**BidMachineKeywordsTransformer** class was renamed to **BDMExternalAdapterKeywordsTransformer** class
-
 ##  Changelog
 
 ### Version 1.6.4.1
 
 * Update Mopub sdk 5.16.1
+
+> **_WARNING:_** Migrate 1.6.4.0 - 1.6.4.1
+
+**BidMachineKeywordsTransformer** class was renamed to **BDMExternalAdapterKeywordsTransformer** class
 
 ### Version 1.6.4.0
 
