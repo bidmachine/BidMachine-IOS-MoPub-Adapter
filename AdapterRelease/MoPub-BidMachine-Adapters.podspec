@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "MoPub-BidMachine-Adapters"
-  spec.version      = "1.6.4.1"
+  spec.version      = "1.6.5.0"
   spec.summary      = "BidMachine IOS adapter for MoPub mediation"
   spec.description  = <<-DESC
   Supported ad formats: Banner, Interstitial, Rewarded Video.\n
@@ -38,6 +38,6 @@ limitations under the License.
     "VALID_ARCHS[sdk=iphonesimulator*]": "x86_64"
   }
 
-  spec.dependency 'BidMachine', '1.6.4'
+  spec.dependency 'BidMachine', '1.6.5'
   spec.dependency 'mopub-ios-sdk', '5.16.1'
 end

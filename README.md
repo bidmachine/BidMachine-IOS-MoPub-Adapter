@@ -2,6 +2,10 @@
 
 ##  Changelog
 
+### Version 1.6.5.0
+
+* Update BidMachine sdk 1.6.5
+
 ### Version 1.6.4.1
 
 * Update Mopub sdk 5.16.1
