@@ -2,6 +2,10 @@
 
 ##  Changelog
 
+### Version 1.7.1.0
+
+* Update BidMachine sdk 1.7.1.0
+
 ### Version 1.6.5.0
 
 * Update BidMachine sdk 1.6.5

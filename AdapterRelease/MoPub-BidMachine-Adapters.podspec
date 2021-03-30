@@ -24,6 +24,7 @@ limitations under the License.
   spec.platform     = :ios, '10.0'
   spec.source       = { :git => "https://github.com/bidmachine/BidMachine-IOS-MoPub-Adapter.git", :tag => "v#{spec.version}" }
 
+  spec.swift_versions = "5.0"
   spec.source_files = 'Adapter/**/*.{h,m}'
   spec.static_framework = true
 
