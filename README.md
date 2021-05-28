@@ -2,6 +2,10 @@
 
 ##  Changelog
 
+### Version 1.7.3.2
+
+* Fix mopub adapter version
+
 ### Version 1.7.3.1
 
 * Update Mopub sdk 5.16.2
