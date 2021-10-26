@@ -2,6 +2,10 @@
 
 ##  Changelog
 
+### Version 1.8.0.0
+
+* Update BidMachine sdk 1.8.0.0
+
 ### Version 1.7.4.0
 
 * Update Mopub sdk 5.18.(2 +)
