@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "MoPub-BidMachine-Adapters"
-  spec.version      = "1.8.0.0"
+  spec.version      = "1.8.0.1"
   spec.summary      = "BidMachine IOS adapter for MoPub mediation"
   spec.description  = <<-DESC
   Supported ad formats: Banner, Interstitial, Rewarded Video.\n
@@ -22,7 +22,8 @@ limitations under the License.
 
   spec.author       = { "Appodeal" => "http://www.appodeal.com" }
   spec.platform     = :ios, '10.0'
-  spec.source       = { :git => "https://github.com/bidmachine/BidMachine-IOS-MoPub-Adapter.git", :tag => "v#{spec.version}" }
+  # spec.source       = { :git => "https://github.com/bidmachine/BidMachine-IOS-MoPub-Adapter.git", :tag => "v#{spec.version}" }
+  spec.source       = { :git => "https://github.com/bidmachine/BidMachine-IOS-MoPub-Adapter.git", :branch => "master" }
 
   spec.swift_versions = "5.0"
   spec.source_files = 'Adapter/**/*.{h,m}'
