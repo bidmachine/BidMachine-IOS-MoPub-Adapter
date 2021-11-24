@@ -26,9 +26,9 @@ Pod::Spec.new do |spec|
 
   spec.default_subspec = 'Prebid'
   
-  spec.subspec 'Base' do |base|
-    base.dependency "#{sourceName}/Prebid"
-    base.dependency "#{sourceName}/Postbid"
+  spec.subspec 'All' do |all|
+    all.dependency "#{sourceName}/Prebid"
+    all.dependency "#{sourceName}/Postbid"
   end
 
   spec.subspec 'Prebid' do |prebid|
