@@ -11,6 +11,7 @@ target 'Target' do
   project 'Project.xcodeproj'
   pod 'MoPub-BidMachine-Adapters/All', '~> 1.8.0.1'
 end
+```
 
 ### Version 1.8.0.0
 
