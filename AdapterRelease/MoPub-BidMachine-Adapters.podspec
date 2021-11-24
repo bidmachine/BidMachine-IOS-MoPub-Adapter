@@ -24,7 +24,8 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/bidmachine/BidMachine-IOS-MoPub-Adapter.git", :branch => "master" }
   spec.swift_versions = "4.0", "4.2", "5.0"
 
-  spec.default_subspec = 'Base'
+  spec.default_subspec = 'Prebid'
+  
   spec.subspec 'Base' do |base|
     base.dependency "#{sourceName}/Prebid"
     base.dependency "#{sourceName}/Postbid"
@@ -37,9 +38,9 @@ Pod::Spec.new do |spec|
   end
 
   spec.subspec 'Postbid' do |postbid|
-    prebid.dependency "BDMIABAdapter", "~> #{sdkVersion}"
-    prebid.dependency "mopub-ios-sdk", "~> #{networkVersion}"
-    prebid.source_files = 'Adapter/Postbid/*.{h,m}'   
+    postbid.dependency "BDMIABAdapter", "~> #{sdkVersion}"
+    postbid.dependency "mopub-ios-sdk", "~> #{networkVersion}"
+    postbid.source_files = 'Adapter/Postbid/*.{h,m}'   
   end
 
   
