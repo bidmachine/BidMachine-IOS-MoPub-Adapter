@@ -2,6 +2,16 @@
 
 ##  Changelog
 
+### Version 1.8.0.1
+
+* Append postbid classes
+> **_WARNING:_** PostBid classes available for Cocoapods path:
+```ruby
+target 'Target' do
+  project 'Project.xcodeproj'
+  pod 'MoPub-BidMachine-Adapters/All', '~> 1.8.0.1'
+end
+
 ### Version 1.8.0.0
 
 * Update BidMachine sdk 1.8.0.0
