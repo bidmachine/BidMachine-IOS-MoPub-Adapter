@@ -33,11 +33,13 @@ Pod::Spec.new do |spec|
   spec.subspec 'Prebid' do |prebid|
     prebid.dependency "BDMIABAdapter", "~> #{sdkVersion}"
     prebid.dependency "mopub-ios-sdk", "~> #{networkVersion}"
-    prebid.source_files = 'Adapter/**/*.{h,m}'
+    prebid.source_files = 'Adapter/Prebid/*.{h,m}'
   end
 
   spec.subspec 'Postbid' do |postbid|
-    
+    prebid.dependency "BDMIABAdapter", "~> #{sdkVersion}"
+    prebid.dependency "mopub-ios-sdk", "~> #{networkVersion}"
+    prebid.source_files = 'Adapter/Postbid/*.{h,m}'   
   end
 
   
